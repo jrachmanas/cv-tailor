@@ -1,0 +1,17 @@
+# Personal data — never commit
+master_profile.md
+outputs/
+
+# Project planning docs
+cv_tailor_skill_plan.md
+
+# Source CVs and course materials (personal / third-party copyright)
+*.pdf
+
+# OS artifacts
+.DS_Store
+-
+
+# Editor
+.vscode/
+*.swp
