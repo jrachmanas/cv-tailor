@@ -9,33 +9,73 @@
 
 ## What it does
 
-A Claude Code skill that turns your master career profile into a tailored CV + cover letter for a specific job, in one conversation. Three stages:
+A Claude Code skill that turns your master career profile into a tailored CV + cover letter for a specific job, in one conversation. Three stages run automatically:
 
 1. **Job analysis** — paste a URL or JD text; Claude classifies every requirement, maps it to your profile, flags gaps, scores fit
-2. **CV tailoring** — rewrites your bullets using the RAP method, mirrors JD keywords for ATS, applies formatting rules, outputs a `.docx` ready to send
+2. **CV tailoring** — rewrites your bullets using the RAP method, mirrors JD keywords for ATS, applies your formatting rules, outputs a `.docx` ready to send
 3. **Cover letter** — picks the right hook type, writes four tight paragraphs, outputs a matching `.docx`
 
 ---
 
-## How to use it
+## Starting from zero — full setup guide
 
 ### Prerequisites
 
-- [Claude Code](https://github.com/anthropics/claude-code) installed
+- [Claude Code](https://github.com/anthropics/claude-code) installed and running
 - A Claude API key configured
 
-### Setup
+---
+
+### 1. Get the repo
+
+Fork or clone:
 
 ```bash
-git clone https://github.com/<your-username>/cv-tailor.git
+git clone https://github.com/jrachmanas/cv-tailor.git
 cd cv-tailor
 ```
 
-Open the folder as a Claude Code project (it will auto-load `CLAUDE.md`).
+Open the folder as a Claude Code project. `CLAUDE.md` auto-loads and tells Claude how to use the skill.
 
-### Step 1 — Build your master profile (once)
+---
+
+### 2. Customise the transformation rules (one-time, ~15 min)
+
+Before building your profile, open `cv-tailor/references/transformation_rules.md` and adjust it for your context. This file is the design spec — Claude follows it when building your CV.
+
+Key decisions to make:
+
+| Rule | Default | When to change |
+|---|---|---|
+| Rule 1 — Resume type | Chronological | Switch to Combination if you're pivoting careers or skills need to lead |
+| Rule 9 — Page length | 2 pages max | Reduce to 1 if you have < 5 years experience |
+| Rule 5 — Skills style | Subcategory | Switch to Proven style for quota-driven roles (sales, BD); Creative style for design/visual roles |
+| Rule 10 — ATS | Strict (no tables, no columns) | Relax slightly if targeting boutique firms that read CVs manually |
+
+If you're in a field with different CV conventions (academia, government, creative) — read all 11 rules and update any that don't match your industry norms.
+
+---
+
+### 3. Add your existing CV (optional but recommended)
+
+If you have an existing CV, drop it in the project folder. Any format works — `.pdf`, `.docx`, `.txt`.
+
+Claude will read it in Stage 0 to pre-populate your master profile, so you answer questions about gaps and wins rather than typing your entire history from scratch.
 
 ```
+cv-tailor/
+your_cv.pdf        ← drop it here (gitignored by default if named *.pdf)
+master_profile_template.md
+...
+```
+
+> **Privacy note:** your CV and all outputs are gitignored. They stay on your machine and are never committed.
+
+---
+
+### 4. Build your master profile (one-time, ~30 min)
+
+```bash
 cp master_profile_template.md master_profile.md
 ```
 
@@ -45,46 +85,49 @@ Then in a Claude Code conversation:
 Build my master profile
 ```
 
-Claude interviews you across 5 phases (~30 min). Your answers get saved to `master_profile.md` — the single source of truth for everything that follows. This file is gitignored and never leaves your machine.
+Claude runs a 5-phase interview:
+1. **Identity** — confirms your name, location, target roles, target industries
+2. **Personal brand** — 3 questions to extract your passion, unique approach, and career goal
+3. **Win-mining** — goes role by role through your CV, asking for metrics, context, and stories behind each bullet
+4. **Education & projects** — thesis, certifications, side projects, extracurriculars
+5. **Gaps** — any date gaps or career transitions that need honest framing
 
-### Step 2 — Apply for a job
+Answers are saved to `master_profile.md` after each phase (crash-safe). This file is your single source of truth — every tailored CV is a projection of it, not a new document.
 
-Paste a job URL or JD text:
+> **Tip:** Answer in detail. Vague answers produce vague CVs. The interview is the highest-leverage 30 minutes of this whole process.
+
+---
+
+### 5. Apply for a job (repeat for every application)
+
+Paste a job URL or the full JD text:
 
 ```
 Tailor my CV for this role: https://jobs.example.com/head-of-data
 ```
 
-Claude runs all three stages automatically. Outputs land in:
+Claude runs all three stages and saves outputs to:
 
 ```
 outputs/<company>_<YYYY-MM-DD>/
-├── cv_<company>_<date>.md           # editable source
-├── cv_<company>_<date>.docx         # send this to the employer
+├── cv_<company>_<date>.md              # editable markdown source
+├── cv_<company>_<date>.docx            # send this to the employer
 ├── cover_letter_<company>_<date>.md
-├── cover_letter_<company>_<date>.docx
-└── tailoring_notes_<company>_<date>.md  # your private prep notes
+├── cover_letter_<company>_<date>.docx  # send this to the employer
+└── tailoring_notes_<company>_<date>.md # your private prep notes — never send
 ```
 
-### Step 3 — Update your profile over time
+---
+
+### 6. Update your profile over time
+
+When you complete a project, get promoted, or want to add something new:
 
 ```
 Add my Q2 platform launch to my profile
 ```
 
-Claude asks targeted questions and updates only the relevant section. All future CVs pick up the change.
-
----
-
-## Customise for your context
-
-Before running Stage 2 for the first time, open `cv-tailor/references/transformation_rules.md` and decide:
-
-- **Which resume type is your default?** The file defaults to Chronological for experienced candidates. If you're a recent graduate or making a career pivot, Combination may serve you better — update Rule 1 accordingly.
-- **What does your ideal CV look like?** The rules cover section order, bullet format, skills style, length, and visual hierarchy. Read through them and adjust anything that doesn't match the conventions of your industry (e.g., creative fields, academia, or government roles have different norms).
-- **What's your ATS context?** Rule 10 assumes most employers use ATS. If you're targeting small companies or roles where CVs are read by humans first, you can be slightly more expressive with formatting.
-
-The rules file is your design spec. The skill follows it — so the output quality is directly tied to how well the rules reflect what a great CV looks like in your specific field.
+Claude asks targeted questions and updates only the relevant section. All future CVs automatically pick up the change.
 
 ---
 
@@ -94,13 +137,13 @@ The rules file is your design spec. The skill follows it — so the output quali
 cv-tailor/
 ├── SKILL.md                     # all skill logic — Stage 0, 1, 2, 3
 ├── references/
-│   ├── transformation_rules.md  # CV construction rules (RAP, ATS, formatting)
+│   ├── transformation_rules.md  # your CV design spec — customise this first
 │   ├── action_words.md          # 100+ action verbs by category
-│   ├── ats_patterns.md          # how to mirror JD language without stuffing
+│   ├── ats_patterns.md          # ATS keyword mirroring rules
 │   └── examples/
-│       ├── good_brand_statements.md
-│       ├── rap_before_after.md
-│       └── cover_letter_hooks.md
+│       ├── good_brand_statements.md   # 5 annotated examples across industries
+│       ├── rap_before_after.md        # 6 before/after bullet rewrites with notes
+│       └── cover_letter_hooks.md      # 8 hook types with templates and examples
 CLAUDE.md                        # auto-loaded project instructions
 master_profile_template.md       # blank starting point — copy to master_profile.md
 .gitignore                       # keeps your personal data off Git
@@ -110,7 +153,7 @@ master_profile_template.md       # blank starting point — copy to master_profi
 
 ## Key design decisions
 
-- **Single source of truth.** `master_profile.md` holds everything once. Every tailored CV is a projection of it, not a new document.
+- **Single source of truth.** `master_profile.md` holds everything once. Every tailored CV is a projection of it — not a rewrite from scratch each time.
 - **Never invents facts.** Gaps are flagged in `tailoring_notes`, never papered over in the CV.
 - **RAP method.** Every bullet: Result → Action → Problem. Quantified where possible, honest where not.
 - **ATS-first output.** `.docx` format, Calibri font, no tables in body, no text boxes, no columns — survives any ATS parser.
@@ -120,16 +163,17 @@ master_profile_template.md       # blank starting point — copy to master_profi
 
 ## Limitations (honest)
 
-- Built and tested for one person's specific career (data leadership / fintech). Prompts and rules are tuned to that context. Your mileage will vary.
-- The transformation rules are a synthesis of general CV advice — not a certified methodology. Treat them as a starting point, not gospel.
-- Stage 0 (profile build) is interview-style. It works best when you answer honestly and in detail. Vague answers produce vague CVs.
+- Built and tested for one specific career context (data leadership / fintech). The rules and examples are tuned to that background. Adapt them to your field.
+- The transformation rules are a synthesis of general CV advice — not a certified methodology. They're a starting point, not gospel.
+- Stage 0 is interview-style. It works best when you answer honestly and in detail.
 - This is a Claude Code skill, not a standalone app. You need Claude Code running locally with API access.
+- Output quality depends on how complete your `master_profile.md` is and how well `transformation_rules.md` reflects your industry's conventions.
 
 ---
 
 ## Contributing
 
-Fork it. Improve the rules. Try it for a different domain or seniority level. If you make something useful, a PR is welcome.
+Fork it. Improve the rules. Adapt it for a different domain (design, academia, law, engineering). If you make something useful, a PR is welcome.
 
 ---
 
