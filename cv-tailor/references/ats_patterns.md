@@ -81,6 +81,16 @@ When a Must-Have keyword has no match in `master_profile.md`:
 4. If no adjacent experience exists: flag as a hard gap. The user decides whether to apply.
 5. `[GAP]` items go in the **Gaps & Honest Framings** note to the candidate only. They NEVER appear in the CV body or cover letter.
 
+### Gap categorisation (drives Stage 3 treatment)
+
+Every gap surfaced in Stage 1 must also be labelled with one of three categories. The label tells Stage 3 (tailoring notes) how much offensive narrative the gap needs alongside the defensive honest-framing script. See `SKILL.md` § 2.10 ("Gap coverage template") for the three-part block this drives.
+
+- **Hard** — JD lists this as required (Tier 1) and the candidate has zero evidence. Full three-part block mandatory in tailoring notes.
+- **Soft** — JD lists this as preferred or bonus (Tier 2) and the candidate has zero evidence. Three-part block recommended; first two parts only is acceptable if the motivation/plan would be redundant.
+- **Adjacent** — candidate has adjacent but not identical experience. Full three-part block mandatory; the motivation element must explicitly bridge the adjacency.
+
+The job-analysis output file (`outputs/<company>_<date>/job_analysis_<company>_<date>.md`) must surface the label inline with each gap so the tailoring-notes step can act on it without re-deriving the category.
+
 ---
 
 ## Keyword Placement by Section

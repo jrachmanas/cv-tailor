@@ -172,11 +172,18 @@ Recommend resume type:
 
 ### 1.6 Gaps note to user
 
-List every ❌ GAP item with a brief coaching note:
-- "dbt — adjacent experience exists with Airflow/Spark; mention any dbt exposure or flag for honest framing"
-- "GCP/BigQuery — on-prem/Hadoop experience exists; position as cloud-agnostic, note willingness to learn"
+List every ❌ GAP item with a brief coaching note **and a gap category** (Hard / Soft / Adjacent). The category drives how Stage 3 handles the gap in tailoring notes:
 
-Flag if any gap is a likely knock-out criterion (Tier 1, no adjacent skill).
+- **Hard gap** — JD lists this as required (Tier 1) and the candidate has zero evidence. Stage 3 must produce the full three-part gap section (factual / honest framing / motivation + close-the-gap plan).
+- **Soft gap** — JD lists this as preferred or bonus (Tier 2) and the candidate has zero evidence. Stage 3 three-part section recommended; first two parts only is acceptable if the motivation/plan would be redundant with another gap.
+- **Adjacent gap** — candidate has adjacent but not identical experience (Tier 1 or Tier 2). Stage 3 must produce the full three-part section; the motivation element should explicitly bridge the adjacency.
+
+Examples:
+- "dbt — **[Adjacent]** — Airflow/Spark experience exists; mention any dbt exposure or flag for honest framing"
+- "GCP/BigQuery — **[Hard]** — on-prem/Hadoop experience exists but no managed-cloud production; position as cloud-agnostic, note willingness to learn"
+- "Corporate travel domain — **[Soft]** — bonus only in JD; zero direct exposure"
+
+Flag if any Hard gap is a likely knock-out criterion (Tier 1, no adjacent skill at all — not even category-adjacent).
 
 ### 1.7 Write output file
 
@@ -193,7 +200,7 @@ Source: <URL or "pasted">
 ## Responsibility themes
 ## Match analysis table
 ## Fit score
-## Gaps & coaching notes
+## Gaps & coaching notes (with Hard / Soft / Adjacent labels)
 ```
 
 After writing, confirm: "Analysis saved. Ready for Stage 2 — shall I tailor the CV now?"
@@ -266,6 +273,24 @@ Rules:
 - Max 60 words
 - Load `references/examples/good_brand_statements.md` for tone reference
 - Anchor to the core problem this specific role solves — read it from the job analysis
+
+#### 2.3.1 Claim audit on the brand statement (hallucination guardrail)
+
+Before emitting the brand statement, run a literal claim-by-claim audit. For every phrase, identify which section of `master_profile.md` backs it. If a phrase fails any of the three gates below, rewrite it using a stricter alternative drawn from the profile. **Do not soften with hedges ("approximately", "roughly") — replace.**
+
+**1. Years gate.** Any "X+ years owning/leading/managing [scope]" claim must use the tenure of the role(s) where that scope was actually owned. Do not fold tenure across role types where the prior role did not own the claimed scope.
+- ✅ Honest: "5+ years owning platform modernisation" when TPM tenure ≥ 5 years.
+- ❌ Hallucination: "6+ years owning platform modernisation" by folding in a prior Data Engineer role that did not own modernisation.
+
+**2. Title gate.** Title-level adjectives (Senior, Lead, Principal, Staff, Director, Head of, VP) in self-descriptions must either (a) match the candidate's formal title in `master_profile.md`, or (b) be omitted. Do not promote a title to mirror the JD's seniority framing. Describing scope directly is allowed — that is substance, not title inflation.
+- ✅ Honest: "Technical product leader with company-level scope across a 300+ person organisation".
+- ❌ Tilt: "Senior technical product leader" when the formal title is "Technical Product Manager".
+
+**3. Portfolio gate.** Phrases that imply formal ownership of a product portfolio ("API roadmap", "platform roadmap", "integration roadmap", "product line", "product portfolio") must be backed by evidence the candidate owned such a portfolio with the rigor those words imply (versioning, KPIs, formal stakeholder ownership). If the candidate built a platform that has APIs in it but did not own an API-product portfolio, use descriptive phrasing instead.
+- ✅ Honest: "API-driven platform capabilities", "platform exposing programmatic interfaces".
+- ❌ Tilt: "API/integration roadmaps" when no such roadmap was formally owned.
+
+After the audit, the brand statement should survive a literal read from a person who knows the candidate's history. If any phrase makes the candidate flinch on a literal-truth read, the audit failed — rewrite the phrase.
 
 ### 2.4 Skills section
 
@@ -349,6 +374,7 @@ For each ❌ GAP keyword:
 - [ ] No invented facts
 - [ ] All numbers sourced from master_profile.md
 - [ ] Brand statement ≤ 60 words, no banned phrases
+- [ ] **Brand statement passes the 2.3.1 claim audit (Years / Title / Portfolio gates)**
 - [ ] Header shows correct location and remote preference from master_profile.md
 - [ ] Total CV length: 2 pages max (aim for ~700–850 words of body copy)
 - [ ] Gaps note written separately for the user (not in the CV)
@@ -383,8 +409,36 @@ Formatting spec for the docx:
 Contents of tailoring notes:
 - Pre-writing decisions made (A–D)
 - ATS keyword audit results
-- GAP items and honest framing suggestions
+- **Gap coverage section** (see template below — replaces the older "honest framing suggestions" sub-section)
 - Anything the user should be ready to discuss in an interview that the CV signals but doesn't fully explain
+
+#### Gap coverage template (three-part offensive structure)
+
+For every gap surfaced in Stage 1, produce a block in the tailoring notes using the template below. Every **Hard** and **Adjacent** gap receives the full three-part treatment. **Soft** gaps may receive the first two parts only if the motivation/plan would be redundant with another gap covered in full.
+
+```
+### Gap N — <one-line label> [Hard | Soft | Adjacent]
+
+**The gap (factual):**
+What's missing from the candidate's profile relative to the JD requirement.
+One or two sentences. Neutral tone, no defence yet.
+
+**Honest framing (defensive script for the interview):**
+How to acknowledge the gap when it's raised. A 30-second script the candidate
+can deliver without being evasive or oversold.
+
+**Motivation + close-the-gap plan (offensive narrative):**
+- Why the candidate wants to close this gap — the genuine motivation, drawn from
+  master_profile.md (career direction, brand block, project signals). Not a posture.
+- The concrete plan — first-60-days reading list, weekly cadence, ramp project,
+  who to shadow, what to ship as the first proof. Scoped, not generic.
+- Evidence from history that the candidate can close gaps of this shape at speed —
+  at least one cross-reference to a prior fast-ramp moment in master_profile.md.
+```
+
+**Why three parts and not two:** the first two parts give the candidate a defensive script for when a gap is raised. The third part gives an offensive narrative — the answer to "why are you the right hire even with this gap?" rather than just "how do you respond when this gap is raised?". Senior roles in particular require the second posture; without it the candidate looks like a junior-with-experience instead of a senior-with-trajectory.
+
+**Source rule:** the motivation element must cross-reference `master_profile.md` directly (career-direction goal, brand block, prior fast-ramp project). Do not invent motivation. If the profile lacks a clear signal for why the candidate wants to close a specific gap, leave the motivation element blank and flag it to the user instead of fabricating it.
 
 After writing all three, confirm:
 > "CV saved as .md and .docx. Here's what I want you to check before we move to the cover letter: [3–5 specific things to review carefully]"
